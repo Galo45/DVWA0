@@ -17,10 +17,13 @@
     Header always unset X-AspNet-Version
 
     # 6. HttpOnly + SameSite en TODAS las cookies (aplicado a tablas 'always' y por defecto)
-    Header always edit Set-Cookie "^(?i)(?!.*HttpOnly)(.*)$" "$1; HttpOnly"
-    Header always edit Set-Cookie "^(?i)(?!.*SameSite)(.*)$" "$1; SameSite=Lax"
-    Header edit Set-Cookie "^(?i)(?!.*HttpOnly)(.*)$" "$1; HttpOnly"
-    Header edit Set-Cookie "^(?i)(?!.*SameSite)(.*)$" "$1; SameSite=Lax"
+    Header always edit Set-Cookie "(?i); HttpOnly" ""
+    Header always edit Set-Cookie "(?i); SameSite=\w+" ""
+    Header always edit Set-Cookie (.*) "$1; HttpOnly; SameSite=Lax"
+
+    Header edit Set-Cookie "(?i); HttpOnly" ""
+    Header edit Set-Cookie "(?i); SameSite=\w+" ""
+    Header edit Set-Cookie (.*) "$1; HttpOnly; SameSite=Lax"
 </IfModule>
 
 # 7. Ocultar firma y version del servidor Apache
