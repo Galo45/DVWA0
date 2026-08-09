@@ -74,7 +74,7 @@ function dvwa_start_session() {
 			'samesite' => $samesite
 		]);
 	} else {
-		session_set_cookie_params($maxlifetime, '/', '', $secure, $httponly);
+		session_set_cookie_params($maxlifetime, "/; SameSite=$samesite", '', $secure, $httponly);
 	}
 
 	/*
@@ -123,7 +123,7 @@ if (array_key_exists ("Login", $_POST) && $_POST['Login'] == "Login") {
 				'samesite' => $_dvwa_samesite
 			]);
 		} else {
-			session_set_cookie_params(86400, '/', '', false, true);
+			session_set_cookie_params(86400, "/; SameSite=$_dvwa_samesite", '', false, true);
 		}
 		session_start();
 	}
@@ -244,7 +244,7 @@ function dvwaSecurityLevelSet( $pSecurityLevel ) {
 			'samesite' => 'Lax'
 		]);
 	} else {
-		setcookie( 'security', $pSecurityLevel, 0, "/", "", false, true );
+		setcookie( 'security', $pSecurityLevel, 0, "/; SameSite=Lax", "", false, true );
 	}
 	$_COOKIE['security'] = $pSecurityLevel;
 }
