@@ -12,11 +12,14 @@ if (!file_exists(DVWA_WEB_PAGE_TO_ROOT . 'config/config.inc.php')) {
 // Include configs
 require_once DVWA_WEB_PAGE_TO_ROOT . 'config/config.inc.php';
 
-// Send global security headers
-header("Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none';");
+// Send global security headers (remedia alertas OWASP ZAP)
+header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';");
 header("X-Frame-Options: SAMEORIGIN");
 header("X-Content-Type-Options: nosniff");
+header("Referrer-Policy: strict-origin-when-cross-origin");
+header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
 @header_remove("X-Powered-By");
+ini_set('expose_php', '0');
 
 // Declare the $html variable
 if( !isset( $html ) ) {
@@ -109,6 +112,19 @@ if (array_key_exists ("Login", $_POST) && $_POST['Login'] == "Login") {
 	dvwa_start_session();
 } else {
 	if (!session_id()) {
+		// Configurar cookie de sesion segura antes de iniciar
+		$_dvwa_samesite = 'Lax';
+		if (isset($_COOKIE['security']) && $_COOKIE['security'] === 'impossible') {
+			$_dvwa_samesite = 'Strict';
+		}
+		session_set_cookie_params([
+			'lifetime' => 86400,
+			'path' => '/',
+			'domain' => parse_url($_SERVER['HTTP_HOST'] ?? '', PHP_URL_HOST) ?? '',
+			'secure' => false,
+			'httponly' => true,
+			'samesite' => $_dvwa_samesite
+		]);
 		session_start();
 	}
 }

@@ -1,25 +1,25 @@
 <IfModule mod_headers.c>
-    # Enforce CSP (Content Security Policy)
-    Header set Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none';"
+    # 1. Content Security Policy (CSP) - con directivas de respaldo completas
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';"
 
-    # Enforce Anti-Clickjacking (X-Frame-Options)
-    Header set X-Frame-Options "SAMEORIGIN"
+    # 2. Anti-Clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
 
-    # Enforce X-Content-Type-Options (nosniff)
-    Header set X-Content-Type-Options "nosniff"
+    # 3. Prevenir MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
 
-    # Mitigate Information Disclosure (X-Powered-By, Server, etc.)
-    Header unset X-Powered-By
+    # 4. Control de Referrer (evita fuga de informacion)
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # 5. Eliminar cabeceras que revelan informacion del servidor
     Header always unset X-Powered-By
-    Header unset Server
     Header always unset Server
-    Header unset X-AspNet-Version
     Header always unset X-AspNet-Version
 
-    # Enforce HttpOnly and SameSite flags on all cookies
-    Header edit Set-Cookie "^(?i)(?!.*HttpOnly)(.*)$" "$1; HttpOnly"
-    Header edit Set-Cookie "^(?i)(?!.*SameSite)(.*)$" "$1; SameSite=Lax"
+    # 6. HttpOnly + SameSite en TODAS las cookies
+    Header always edit Set-Cookie "^(.*)$" "$1; HttpOnly; SameSite=Lax"
 </IfModule>
 
-# Turn off Server Signature
+# 7. Ocultar firma y version del servidor Apache
 ServerSignature Off
+ServerTokens Prod
