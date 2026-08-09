@@ -13,7 +13,7 @@ if (!file_exists(DVWA_WEB_PAGE_TO_ROOT . 'config/config.inc.php')) {
 require_once DVWA_WEB_PAGE_TO_ROOT . 'config/config.inc.php';
 
 // Send global Content Security Policy (CSP) header
-header( "Content-Security-Policy: default-src 'self'" );
+header("Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none';");
 
 // Declare the $html variable
 if( !isset( $html ) ) {
