@@ -61,25 +61,21 @@ function dvwa_start_session() {
 
 	$maxlifetime = 86400;
 	$secure = false;
-	$domain = parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST);
-
-	/*
-	 * Need to do this as you can't update the settings of a session
-	 * while it is open. So check if one is open, close it if needed
-	 * then update the values and start it again.
-	*/
 	if (session_status() == PHP_SESSION_ACTIVE) {
 		session_write_close();
 	}
-
-	session_set_cookie_params([
-		'lifetime' => $maxlifetime,
-		'path' => '/',
-		'domain' => $domain,
-		'secure' => $secure,
-		'httponly' => $httponly,
-		'samesite' => $samesite
-	]);
+	if (PHP_VERSION_ID >= 70300) {
+		session_set_cookie_params([
+			'lifetime' => $maxlifetime,
+			'path' => '/',
+			'domain' => '',
+			'secure' => $secure,
+			'httponly' => $httponly,
+			'samesite' => $samesite
+		]);
+	} else {
+		session_set_cookie_params($maxlifetime, '/', '', $secure, $httponly);
+	}
 
 	/*
 	 * We need to force a new Set-Cookie header with the updated flags by updating
@@ -117,14 +113,18 @@ if (array_key_exists ("Login", $_POST) && $_POST['Login'] == "Login") {
 		if (isset($_COOKIE['security']) && $_COOKIE['security'] === 'impossible') {
 			$_dvwa_samesite = 'Strict';
 		}
-		session_set_cookie_params([
-			'lifetime' => 86400,
-			'path' => '/',
-			'domain' => parse_url($_SERVER['HTTP_HOST'] ?? '', PHP_URL_HOST) ?? '',
-			'secure' => false,
-			'httponly' => true,
-			'samesite' => $_dvwa_samesite
-		]);
+		if (PHP_VERSION_ID >= 70300) {
+			session_set_cookie_params([
+				'lifetime' => 86400,
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httponly' => true,
+				'samesite' => $_dvwa_samesite
+			]);
+		} else {
+			session_set_cookie_params(86400, '/', '', false, true);
+		}
 		session_start();
 	}
 }
