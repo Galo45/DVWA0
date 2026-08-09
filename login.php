@@ -54,7 +54,6 @@ $messagesHtml = messagesPopAllToHtml();
 Header( 'Cache-Control: no-cache, must-revalidate');    // HTTP/1.1
 Header( 'Content-Type: text/html;charset=utf-8' );      // TODO- proper XHTML headers...
 Header( 'Expires: Tue, 23 Jun 2009 12:00:00 GMT' );     // Date in the past
-Header( "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://www.gstatic.com/recaptcha/; img-src 'self' data: https://www.gstatic.com/recaptcha/; frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.google.com/;" );
 
 // Anti-CSRF
 generateSessionToken();
