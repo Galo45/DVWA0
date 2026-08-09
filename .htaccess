@@ -23,3 +23,7 @@
 # 7. Ocultar firma y version del servidor Apache
 ServerSignature Off
 ServerTokens Prod
+
+# 8. Redirigir errores comunes a nuestro manejador seguro para enviar cabeceras CSP
+ErrorDocument 404 /404.php
+ErrorDocument 403 /404.php
