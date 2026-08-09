@@ -12,8 +12,11 @@ if (!file_exists(DVWA_WEB_PAGE_TO_ROOT . 'config/config.inc.php')) {
 // Include configs
 require_once DVWA_WEB_PAGE_TO_ROOT . 'config/config.inc.php';
 
-// Send global Content Security Policy (CSP) header
+// Send global security headers
 header("Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none';");
+header("X-Frame-Options: SAMEORIGIN");
+header("X-Content-Type-Options: nosniff");
+@header_remove("X-Powered-By");
 
 // Declare the $html variable
 if( !isset( $html ) ) {
@@ -50,14 +53,8 @@ function dvwa_start_session() {
 	// the security level.
 
 	$security_level = dvwaSecurityLevelGet();
-	if ($security_level == 'impossible') {
-		$httponly = true;
-		$samesite = "Strict";
-	}
-	else {
-		$httponly = false;
-		$samesite = "";
-	}
+	$httponly = true;
+	$samesite = ($security_level == 'impossible') ? "Strict" : "Lax";
 
 	$maxlifetime = 86400;
 	$secure = false;
@@ -219,14 +216,20 @@ function dvwaSecurityLevelGet() {
 }
 
 function dvwaSecurityLevelSet( $pSecurityLevel ) {
-	if( $pSecurityLevel == 'impossible' ) {
-		$httponly = true;
-	}
-	else {
-		$httponly = false;
-	}
+	$httponly = true;
 
-	setcookie( 'security', $pSecurityLevel, 0, "/", "", false, $httponly );
+	if (PHP_VERSION_ID >= 70300) {
+		setcookie('security', $pSecurityLevel, [
+			'expires' => 0,
+			'path' => '/',
+			'domain' => '',
+			'secure' => false,
+			'httponly' => true,
+			'samesite' => 'Lax'
+		]);
+	} else {
+		setcookie( 'security', $pSecurityLevel, 0, "/", "", false, true );
+	}
 	$_COOKIE['security'] = $pSecurityLevel;
 }
 

@@ -1,3 +1,25 @@
 <IfModule mod_headers.c>
+    # Enforce CSP (Content Security Policy)
     Header set Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none';"
+
+    # Enforce Anti-Clickjacking (X-Frame-Options)
+    Header set X-Frame-Options "SAMEORIGIN"
+
+    # Enforce X-Content-Type-Options (nosniff)
+    Header set X-Content-Type-Options "nosniff"
+
+    # Mitigate Information Disclosure (X-Powered-By, Server, etc.)
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
+    Header unset Server
+    Header always unset Server
+    Header unset X-AspNet-Version
+    Header always unset X-AspNet-Version
+
+    # Enforce HttpOnly and SameSite flags on all cookies
+    Header edit Set-Cookie "^(?i)(?!.*HttpOnly)(.*)$" "$1; HttpOnly"
+    Header edit Set-Cookie "^(?i)(?!.*SameSite)(.*)$" "$1; SameSite=Lax"
 </IfModule>
+
+# Turn off Server Signature
+ServerSignature Off
