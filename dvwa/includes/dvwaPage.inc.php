@@ -13,7 +13,7 @@ if (!file_exists(DVWA_WEB_PAGE_TO_ROOT . 'config/config.inc.php')) {
 require_once DVWA_WEB_PAGE_TO_ROOT . 'config/config.inc.php';
 
 // Send global Content Security Policy (CSP) header
-header( "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://www.gstatic.com/recaptcha/; img-src 'self' data: https://www.gstatic.com/recaptcha/; frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.google.com/;" );
+header( "Content-Security-Policy: default-src 'self'" );
 
 // Declare the $html variable
 if( !isset( $html ) ) {
